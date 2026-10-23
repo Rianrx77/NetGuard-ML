@@ -47,7 +47,7 @@ IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares.
 
 [GitHub](https://github.com/Rianrx77/) · [LinkedIn](https://www.linkedin.com/in/rian-renju)
 
-## Optional Phase 5 web interface
+## Web interface
 
 The optional local web interface is a separate frontend and API; the notebook
 remains the training/evaluation workflow and the saved fitted pipeline remains
