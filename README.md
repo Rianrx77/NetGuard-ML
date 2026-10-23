@@ -1,6 +1,6 @@
 # NetGuard ML
 
-NetGuard ML is a planned binary network-flow classification prototype for the
+NetGuard ML is an educational binary network-flow classification prototype for the
 IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares.
 
 The goal is to classify labeled CIC-IDS2017 flow records as:
@@ -10,7 +10,7 @@ The goal is to classify labeled CIC-IDS2017 flow records as:
 
 ## Implementation status
 
-The notebook's Phase 2/3 workflow has completed a run on
+The notebook's Phase 2/3 training workflow completed a run on
 `Wednesday-workingHours.pcap_ISCX.csv` (692,703 source rows; 50,000-row
 bounded sample; stratified 80/20 row-level split). On the 10,000-row held-out
 test set, Logistic Regression achieved 0.9777 accuracy, 0.9698 ATTACK F1, and
@@ -22,20 +22,37 @@ metadata, and `outputs/figures/` for saved plots. This is a benchmark result,
 not evidence of production performance or generalization to modern live traffic;
 related flows may cross the random split.
 
+Phase 4 loads the saved preprocessing-plus-model pipeline and classifies
+compatible local CSV files without requiring ground-truth labels. Set
+`NETGUARD_MODEL_ARTIFACT` to override the model path and
+`NETGUARD_PREDICTION_CSV` to configure the input path, or edit either path in
+the notebook. The input must include all trained feature columns; additional
+columns are reported and ignored. Missing numeric values use the saved
+imputer, while malformed numeric values and infinities are rejected. Per-record
+labels and model-estimated ATTACK probabilities are written to
+`outputs/reports/netguard_predictions.csv`. If no input path is configured, a
+small demonstration CSV is created from the selected CIC-IDS2017 sample under
+`data/sample/`; its predictions are not independent validation. Probability
+values are estimates, not certainty.
+
+This is offline flow-record classification only. It does not capture packets,
+monitor live traffic, or block network connections.
+
 ## Project files
 
 - `PROJECT_SPEC.md` — scope, data source, candidate features, evaluation plan,
   loading strategy, risks, and reproducibility.
-- `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, and model evaluation
-  workflow.
+- `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, model evaluation,
+  and reusable offline prediction workflow.
 - `RianRenju_ProjectReport.docx` — project report scaffold.
 - `requirements.txt` — notebook dependencies, including joblib persistence.
 - `data/raw/` — location for manually obtained original dataset files.
-- `data/sample/` — location for explicitly sampled/derived data, not committed
-  raw data.
+- `data/sample/` — small unlabeled prediction demonstration derived from the
+  selected CIC-IDS2017 sample; not independent validation.
 - `artifacts/` — selected fitted preprocessing-plus-model pipeline.
 - `outputs/figures/` — exploration and held-out evaluation figures.
-- `outputs/reports/` — actual metrics, classification reports, and run metadata.
+- `outputs/reports/` — actual metrics, classification reports, run metadata,
+  and per-record demonstration predictions.
 
 See [PROJECT_SPEC.md](PROJECT_SPEC.md) for scope, methodology, and limitations.
 
@@ -43,10 +60,10 @@ See [PROJECT_SPEC.md](PROJECT_SPEC.md) for scope, methodology, and limitations.
 
 Use the CIC-IDS2017 resource published by the Canadian Institute for
 Cybersecurity (UNB): <https://www.unb.ca/cic/datasets/ids-2017.html>.
-Obtain the data from the official resource and place selected CSV files under
-`data/raw/`. The dataset is large; do not load the full collection into memory
-at once. See the specification for the planned chunked inspection and sampling
-workflow.
+Place selected CSV files under `data/raw/`. The current recorded run streams
+`Wednesday-workingHours.pcap_ISCX.csv` in chunks and caps a seeded
+class-proportional sample at 50,000 rows; no remote download occurs. Raw CSVs
+are excluded from version control.
 
 ## Reproducibility
 

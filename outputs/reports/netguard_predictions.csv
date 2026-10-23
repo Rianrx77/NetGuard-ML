@@ -1,0 +1,11 @@
+record_number,predicted_label,estimated_attack_probability
+1,BENIGN,0.0
+2,BENIGN,0.0
+3,BENIGN,0.0
+4,BENIGN,0.0
+5,BENIGN,0.0
+6,BENIGN,0.0
+7,BENIGN,0.0
+8,BENIGN,0.0
+9,BENIGN,0.0
+10,BENIGN,0.0
