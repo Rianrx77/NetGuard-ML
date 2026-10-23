@@ -25,10 +25,14 @@ production claims remain out of scope.
 - **Verified run subset:** `data/raw/Wednesday-workingHours.pcap_ISCX.csv`.
   Other CSVs are present locally but were not included in this run.
 - **GitHub:** public repository `Rianrx77/NetGuard-ML`; `master` tracks
-  `origin/master`. Phase 4 workflow commit `e1c12af` was pushed successfully.
-- **Working tree:** the root `.gitignore` remains a pre-staged addition and was
-  not included in the Phase 4 commit. Raw CSVs are ignored by the tracked
-  `data/raw/.gitignore`.
+  `origin/master`. Phase 4 workflow commit `e1c12af` and the Phase 5 interface,
+  author credits, and documentation commit `c3c52d5` are pushed.
+- **Working tree after `c3c52d5`:** the regenerated notebook output, evaluation
+  JSON timestamp, and classification-report trailing newline were deliberately
+  excluded from the commit. Unused Vite starter assets under
+  `frontend/public/` and `frontend/src/assets/` also remain untracked. The root
+  `.gitignore` was reviewed and committed; it excludes the scaffold DOCX.
+  CIC-IDS2017 raw CSVs remain ignored by `data/raw/.gitignore`.
 - **Phase 5 scope approved:** React + TypeScript + Vite frontend with a minimal
   FastAPI backend, documented API contract, no database/history, and no
   real-time capture or mock analysis data. Upload limits are 50 MB and 50,000
@@ -322,8 +326,10 @@ Validation actually performed:
   project memory update is tracked separately from that workflow commit.
 - Phase 5 architecture and limits were approved on 2026-10-23. Local setup,
   frontend build/lint, live API routes, model-unavailable behavior, and
-  responsive navigation have been verified. Changes remain uncommitted and
-  unpushed; do not include the pre-staged root `.gitignore` accidentally.
+  responsive navigation have been verified. Implementation and documentation
+  were committed as `c3c52d5` and pushed to `origin/master`. Post-commit
+  notebook/report output changes and unused starter assets remain local and
+  were not pushed.
 
 **Next recommended task:** update the report DOCX with actual Phase 2/3 results
 and limitations, reconcile the remaining stale project-spec text, and run the
