@@ -108,8 +108,6 @@ commands, not deployment instructions.
 
 - `PROJECT_SPEC.md` — scope, data source, candidate features, evaluation plan,
   loading strategy, risks, and reproducibility.
-- `PROJECT_MEMORY.md` — implementation state, decisions, limitations, and
-  session handoff.
 - `API_CONTRACT.md` — optional local frontend/backend API contract.
 - `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, model evaluation,
   and reusable offline prediction workflow.
@@ -120,8 +118,8 @@ commands, not deployment instructions.
 - `RianRenju_ProjectReport.docx` — project report scaffold.
 - `requirements.txt` — notebook dependencies, including joblib persistence.
 - `data/raw/` — location for manually obtained original dataset files.
-- `data/sample/` — small unlabeled prediction demonstration derived from the
-  selected CIC-IDS2017 sample; not independent validation.
+- `data/sample/` — unlabeled inference and labeled attack demonstration
+  samples derived from CIC-IDS2017; neither is independent validation.
 - `artifacts/` — selected fitted preprocessing-plus-model pipeline.
 - `outputs/figures/` — exploration and held-out evaluation figures.
 - `outputs/reports/` — actual metrics, classification reports, run metadata,

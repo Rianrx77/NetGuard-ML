@@ -24,14 +24,24 @@ production claims remain out of scope.
   unavailable; this phase was not executed through the notebook kernel.
 - **Verified run subset:** `data/raw/Wednesday-workingHours.pcap_ISCX.csv`.
   Other CSVs are present locally but were not included in this run.
+- **Labeled attack demonstration sample:** `data/sample/netguard_labeled_attack_demo.csv`
+  was generated from genuine rows in the Wednesday CIC-IDS2017 CSV, using
+  fixed-seed selection. It contains 20 BENIGN records and three records for
+  each of DOS GOLDENEYE, DOS HULK, DOS SLOWHTTPTEST, DOS SLOWLORIS, and
+  HEARTBLEED. It has the 78 trained input features plus the original source
+  `label`; it is for demonstration only and is not independent validation.
+- **Sample compatibility check:** the saved joblib pipeline loaded and
+  produced 35 predictions using the 78 feature columns. The original `label`
+  column was kept outside the model inputs. This confirms schema/inference
+  compatibility only, not model accuracy or generalization.
 - **GitHub:** public repository `Rianrx77/NetGuard-ML`; `master` tracks
-  `origin/master`. Phase 4 workflow commit `e1c12af` and the Phase 5 interface,
-  author credits, and documentation commit `c3c52d5` are pushed.
-- **Working tree after `c3c52d5`:** the regenerated notebook output, evaluation
-  JSON timestamp, and classification-report trailing newline were deliberately
-  excluded from the commit. Unused Vite starter assets under
-  `frontend/public/` and `frontend/src/assets/` also remain untracked. The root
-  `.gitignore` was reviewed and committed; it excludes the scaffold DOCX.
+  `origin/master`. Phase 4 workflow commit `e1c12af`, Phase 5 implementation
+  commit `c3c52d5`, memory commit `40dad01`, and README clarification
+  `fbd358e` are pushed.
+- **Current local worktree:** this follow-up commits the labeled sample and
+  supporting documentation, and moves this development memory under
+  `docs/internal/`. Regenerated notebook output, evaluation/report output
+  changes, and unused Vite starter assets are intentionally excluded.
   CIC-IDS2017 raw CSVs remain ignored by `data/raw/.gitignore`.
 - **Phase 5 scope approved:** React + TypeScript + Vite frontend with a minimal
   FastAPI backend, documented API contract, no database/history, and no
@@ -72,6 +82,8 @@ production claims remain out of scope.
 ## Repository map
 
 - `PROJECT_SPEC.md` — project specification and intended evaluation methodology.
+- `docs/internal/PROJECT_MEMORY.md` — development state, decisions, validation,
+  limitations, and session handoff; kept outside the top-level project files.
 - `README.md` — overview and summary of the completed Wednesday-subset run.
 - `RianRenju_NetGuardML.ipynb` — configurable exploration, preprocessing,
   model training, evaluation, charting, and persistence workflow.
@@ -95,6 +107,10 @@ production claims remain out of scope.
   `data/raw/.gitignore` excludes `*.csv`.
 - `data/sample/netguard_inference_demo.csv` — 10 unlabeled demonstration
   feature rows derived from the selected CIC-IDS2017 source; not independent
+  validation.
+- `data/sample/netguard_labeled_attack_demo.csv` — 35 genuine, labeled
+  Wednesday-source records for inference demonstration; provenance and label
+  counts are documented in `data/README.md`. This is not independent
   validation.
 - `artifacts/netguard_selected_pipeline.joblib` — fitted preprocessing +
   selected Random Forest pipeline.
@@ -172,6 +188,20 @@ production claims remain out of scope.
     input clears prior session results. npm build/lint pass; browser navigation,
     demo inference display, mobile-width layout, and generated CSV contents
     were checked. Native browser download completion remains unverified.
+11. `data/sample/netguard_labeled_attack_demo.csv` is selected from the actual
+    Wednesday source with a fixed seed and bounded per-label reservoir
+    selection. It has 35 rows: 20 BENIGN and 3 each of DOS GOLDENEYE, DOS HULK,
+    DOS SLOWHTTPTEST, DOS SLOWLORIS, and HEARTBLEED. The original CIC label is
+    retained in an extra `label` column, while all 78 model feature columns
+    match the saved pipeline. Rows with infinite or non-numeric feature values
+    were excluded; any missing values are left for the saved imputer. The
+    source scan found 439,683 finite BENIGN rows, 10,293 DOS GOLDENEYE,
+    230,124 DOS HULK, 5,499 DOS SLOWHTTPTEST, 5,796 DOS SLOWLORIS, and 11
+    HEARTBLEED rows. The model loaded and generated 35 predictions when given
+    the feature columns; the source `label` was not used as an input. This
+    checks compatibility only. Because the rows come from the same day/source
+    used in the project workflow, the sample is not independent validation and
+    may overlap the sampled training data.
 
 ## Models and measured results
 
@@ -252,6 +282,12 @@ Validation actually performed:
 - The notebook execution tool failed before running the cell because
   `agent-host-copilotcli:auto` was unavailable. Direct cell execution was used
   instead; it does not verify the notebook editor/kernel integration.
+- The labeled sample was generated by chunk-reading the 225 MB local source
+  file, then its exact row/label counts and 78-feature schema were checked.
+  The saved model ran inference on all 35 rows (23 BENIGN and 12 ATTACK
+  predictions); this is a compatibility smoke check only and is not an
+  evaluation result. No source CSV or raw data was added to version control by
+  this workflow.
 - Before Phase 5, repository inspection found no frontend or backend. Vite
   scaffolded a React + TypeScript project, then its app source was replaced
   with the approved views and Arctic Intelligence styling. `data/README.md`
@@ -327,9 +363,13 @@ Validation actually performed:
 - Phase 5 architecture and limits were approved on 2026-10-23. Local setup,
   frontend build/lint, live API routes, model-unavailable behavior, and
   responsive navigation have been verified. Implementation and documentation
-  were committed as `c3c52d5` and pushed to `origin/master`. Post-commit
-  notebook/report output changes and unused starter assets remain local and
-  were not pushed.
+  were committed as `c3c52d5` and pushed to `origin/master`; the latest README
+  wording update is `fbd358e`. Post-commit notebook/report output changes and
+  unused starter assets remain local and were not pushed.
+- This follow-up adds the labeled demonstration CSV, documents its provenance,
+  and relocates this development memory to `docs/internal/PROJECT_MEMORY.md`.
+  The generated notebook/report outputs and unused starter assets remain
+  intentionally excluded from the commit.
 
 **Next recommended task:** update the report DOCX with actual Phase 2/3 results
 and limitations, reconcile the remaining stale project-spec text, and run the
