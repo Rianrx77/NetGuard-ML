@@ -37,9 +37,11 @@ Primary source: the official Canadian Institute for Cybersecurity CIC-IDS2017
 page, <https://www.unb.ca/cic/datasets/ids-2017.html>. The page describes flow
 CSV files generated using CICFlowMeter and reports daily files in the
 approximately 7.8–13 GB range. The published capture covers five days, with
-Monday described as normal activity and attacks present on later days. Exact
-file contents, labels, schemas, and availability must be checked against the
-downloaded files; none have been inspected in this foundation phase.
+Monday described as normal activity and attacks present on later days. Eight
+CSV files have been placed under `data/raw/`; the notebook is configured to use
+`Wednesday-workingHours.pcap_ISCX.csv` for the current bounded modeling run.
+Schema/label inspection and model evaluation remain dependent on a successful
+notebook execution.
 
 Binary mapping:
 
@@ -122,7 +124,8 @@ Record the chosen model, parameters, dataset subset, sample method, split
 strategy, test results, and limitations in `outputs/reports/`. Save the
 preprocessing-plus-classifier pipeline with joblib in `artifacts/`.
 
-No metric values or model comparisons are available in Phase 1.
+No metric values or model comparisons are recorded until the notebook
+successfully completes with the selected local source data.
 
 ## Limitations
 

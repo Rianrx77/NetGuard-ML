@@ -10,12 +10,12 @@ The goal is to classify labeled CIC-IDS2017 flow records as:
 
 ## Implementation status
 
-The notebook now contains Phase 2 data exploration/preprocessing and Phase 3
-binary model training/evaluation workflows for Logistic Regression and Random
-Forest. No CIC-IDS2017 CSV is currently present under `data/raw/` or
-`data/sample/`, and the notebook cells have not been executed with real data.
-Therefore, this project has no actual model scores, fitted model artifact, or
-evaluation figures yet; none are claimed.
+The notebook contains Phase 2 data exploration/preprocessing and Phase 3 binary
+model training/evaluation workflows for Logistic Regression and Random Forest.
+Eight CIC-IDS2017 CSV files are present under `data/raw/`. The notebook is
+configured to use `Wednesday-workingHours.pcap_ISCX.csv` as its explicit subset.
+The notebook cells have not yet completed execution, so no actual model scores,
+fitted model artifact, or evaluation figures are claimed.
 
 ## Project files
 
