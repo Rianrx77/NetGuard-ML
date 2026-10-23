@@ -1,77 +1,209 @@
-# NetGuard ML
+<div align="center">
+  <img src="netguard_ml_light.svg" alt="NetGuard ML Neural Shield logo" width="112">
+  <h1>NetGuard ML</h1>
+  <p><strong>Offline, binary network-flow classification with CIC-IDS2017</strong></p>
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10 or newer">
+    <img src="https://img.shields.io/badge/scikit--learn-classification-F7931E?logo=scikitlearn&logoColor=white" alt="scikit-learn classification">
+    <img src="https://img.shields.io/badge/FastAPI-local%20API-009688?logo=fastapi&logoColor=white" alt="FastAPI local API">
+    <img src="https://img.shields.io/badge/React%20%2B%20Vite-local%20UI-61DAFB?logo=react&logoColor=black" alt="React and Vite local user interface">
+  </p>
+</div>
 
-NetGuard ML is an educational binary network-flow classification prototype for the
-IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares.
+NetGuard ML is an educational cybersecurity prototype developed for the **IBM
+SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares**. It
+explores a reproducible machine-learning workflow for classifying labeled
+CIC-IDS2017 network-flow records as **BENIGN (0)** or **ATTACK (1)**. An
+optional local web interface uses the same saved model to classify compatible
+CSV files.
 
-The goal is to classify labeled CIC-IDS2017 flow records as:
+> [!WARNING]
+> This is an offline educational prototype. It does not capture packets,
+> monitor live networks, block traffic, or provide a production security
+> control. Predictions and probability estimates are not verified threats or
+> calibrated risk scores.
 
-- `BENIGN` (`0`)
-- `ATTACK` (`1`; any dataset attack label)
+## Contents
 
-## Implementation status
+- [Highlights](#-highlights)
+- [Application screenshots](#-application-screenshots)
+- [Dataset and methodology](#-dataset-and-methodology)
+- [Recorded benchmark results](#-recorded-benchmark-results)
+- [Quick start: notebook](#-quick-start-notebook)
+- [Run the local web interface](#-run-the-local-web-interface)
+- [Use a CSV for offline inference](#-use-a-csv-for-offline-inference)
+- [Repository map](#-repository-map)
+- [Limitations and responsible interpretation](#-limitations-and-responsible-interpretation)
+- [Project report and credits](#-project-report-and-credits)
 
-The notebook's Phase 2/3 training workflow completed a run on
-`Wednesday-workingHours.pcap_ISCX.csv` (692,703 source rows; 50,000-row
-bounded sample; stratified 80/20 row-level split). On the 10,000-row held-out
-test set, Logistic Regression achieved 0.9777 accuracy, 0.9698 ATTACK F1, and
-0.02535 false-positive rate. Random Forest achieved 0.9983 accuracy, 0.9977
-ATTACK F1, and 0.000945 false-positive rate, and was selected by the documented
-criteria. It produced 6 false positives and 11 false negatives. See
-`outputs/reports/` for the actual metrics, classification reports, dataset/split
-metadata, and `outputs/figures/` for saved plots. This is a benchmark result,
-not evidence of production performance or generalization to modern live traffic;
-related flows may cross the random split.
+## 🛡️ Highlights
 
-Phase 4 loads the saved preprocessing-plus-model pipeline and classifies
-compatible local CSV files without requiring ground-truth labels. Set
-`NETGUARD_MODEL_ARTIFACT` to override the model path and
-`NETGUARD_PREDICTION_CSV` to configure the input path, or edit either path in
-the notebook. The input must include all trained feature columns; additional
-columns are reported and ignored. Missing numeric values use the saved
-imputer, while malformed numeric values and infinities are rejected. Per-record
-labels and model-estimated ATTACK probabilities are written to
-`outputs/reports/netguard_predictions.csv`. If no input path is configured, a
-small demonstration CSV is created from the selected CIC-IDS2017 sample under
-`data/sample/`; its predictions are not independent validation. Probability
-values are estimates, not certainty.
+- **Bounded data loading:** reads CIC-IDS2017 CSV data in chunks and uses a
+  seeded, class-proportional sample capped at 50,000 rows.
+- **Binary scope:** maps `BENIGN` to `0`; maps each observed non-empty attack
+  label to `1`.
+- **Leakage-aware preprocessing:** fits imputation, scaling, and encoding on
+  training data only, inside a scikit-learn pipeline.
+- **Two comparable classifiers:** trains Logistic Regression and Random
+  Forest on the same stratified train/test split; applies class weights rather
+  than automatic resampling.
+- **Reusable inference:** persists the preprocessing and selected estimator
+  together in a joblib pipeline.
+- **Optional local UI/API:** validates a compatible CSV, runs the saved
+  pipeline, and presents per-record predictions and the recorded benchmark.
+  Uploaded CSVs are processed in memory and not stored by the API.
 
-This is offline flow-record classification only. It does not capture packets,
-monitor live traffic, or block network connections.
+## 🖥️ Application screenshots
 
-## Project credits
+The following images are screenshots included in the supplied
+`NetGuard ML outputs.docx`; selected screenshots are also included in
+[`docs/images/`](docs/images/). They show the implemented local interface and
+its current demonstration states.
 
-NetGuard ML is an educational cybersecurity project developed as part of the
-IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares.
+<details>
+<summary>View overview, analysis, findings, and evaluation screens</summary>
 
-**Author:** Rian Renju
+### Overview
 
-[GitHub](https://github.com/Rianrx77/) · [LinkedIn](https://www.linkedin.com/in/rian-renju)
+<img src="docs/images/overview.png" alt="NetGuard ML overview showing local model status and workspace summary" width="100%">
 
-## Web interface
+### Traffic analysis
 
-The optional local web interface is a separate frontend and API; the notebook
-remains the training/evaluation workflow and the saved fitted pipeline remains
-the source of prediction behavior. The frontend builds and lints successfully,
-and the API has been exercised locally against the saved model. Browser checks
-covered all five views, upload validation, inference, and generated CSV export
-content. The 10-row demo upload produced 10 BENIGN predictions in that smoke
-test; these are demonstration outputs, not independent validation or
-model-performance results.
+<img src="docs/images/traffic-analysis.png" alt="CSV upload screen with expected model feature schema" width="100%">
 
-The app has Overview, Traffic Analysis, Findings, Model Evaluation, and
-About/Methodology views. It displays the saved evaluation report and model
-availability when served by the API, and runs uploads through the existing
-fitted model. Uploads are limited to 50 MiB and 50,000 rows; CSVs are validated
-against the saved model schema, read in memory, and not stored. The service does
-not create an analysis history or perform live capture/blocking.
-The interface uses the supplied Neural Shield SVG, Plus Jakarta Sans for UI
-text, and IBM Plex Mono for monospace details; its existing light color palette
-is retained.
+### Example inference results
 
-### Run locally
+<img src="docs/images/inference-results.png" alt="Ten-record unlabeled demonstration with per-record BENIGN predictions" width="100%">
 
-In Terminal 1, from the project root, create an isolated backend Python
-environment, install the model runtime and API dependencies, then start the API:
+### Labeled demonstration findings
+
+<img src="docs/images/findings.png" alt="Findings view showing potential attack predictions for the labeled demo sample" width="100%">
+
+### Model evaluation view
+
+<img src="docs/images/model-evaluation.png" alt="Saved held-out metrics comparing Logistic Regression and Random Forest" width="100%">
+
+### Confusion matrices and feature importance
+
+<img src="docs/images/evaluation-details.png" alt="Held-out confusion matrices and Random Forest feature-importance visualization" width="100%">
+
+</details>
+
+## 🧪 Dataset and methodology
+
+### Dataset source
+
+The project uses **CIC-IDS2017**, published by the Canadian Institute for
+Cybersecurity at the University of New Brunswick. See the
+[official dataset page](https://www.unb.ca/cic/datasets/ids-2017.html). The
+notebook does not download the dataset. Obtain the CSV separately and place it
+under `data/raw/`.
+
+The recorded run used only
+`Wednesday-workingHours.pcap_ISCX.csv`:
+
+| Run detail | Recorded value |
+| --- | ---: |
+| Source rows scanned and eligible | 692,703 |
+| Bounded modeling sample | 50,000 |
+| BENIGN / ATTACK sample rows | 31,762 / 18,238 |
+| Train / held-out test rows | 40,000 / 10,000 |
+| Split | Stratified random row-level, 80/20 |
+| Random seed | 42 |
+| Input features | 78 |
+
+### Data preparation
+
+The notebook normalizes column names and labels, reports schema and data
+quality, and streams the CSV in 100,000-row chunks. It excludes identifiers,
+raw timestamps, and label-/outcome-like fields. Numeric missing values are
+imputed with training medians and standardized; categorical fields are
+imputed and one-hot encoded in the fitted pipeline. Infinite values are
+handled as missing during training; the inference workflows reject infinite
+numeric inputs. Duplicate flow rows are counted but not removed because
+duplicate values alone do not establish that records are invalid.
+
+The test partition is held out from fitting and model selection. Both models
+use class weighting (`balanced` for Logistic Regression and
+`balanced_subsample` for Random Forest); no resampling is applied.
+
+## 📊 Recorded benchmark results
+
+These metrics are from the **10,000-row held-out test split** in the recorded
+Wednesday subset run, with ATTACK treated as the positive class. They are
+included to describe that run, not to predict performance on other files or
+live networks.
+
+| Model | Accuracy | ATTACK precision | ATTACK recall | ATTACK F1 | Macro F1 | False-positive rate |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.9777 | 0.9570 | 0.9830 | 0.9698 | 0.9761 | 0.02535 |
+| **Random Forest (selected)** | **0.9983** | **0.9984** | **0.9970** | **0.9977** | **0.9982** | **0.000945** |
+
+The selection rule prioritizes higher ATTACK F1, then higher ATTACK recall,
+then lower false-positive rate; exact ties favor Logistic Regression. The
+selected Random Forest's test confusion counts were **6,346 true negatives,
+6 false positives, 11 false negatives, and 3,637 true positives**. False
+positives are benign records flagged as attacks; false negatives are attack
+records predicted benign.
+
+<p align="center">
+  <img src="outputs/figures/model_comparison.png" alt="Held-out metric comparison of Logistic Regression and Random Forest" width="85%">
+</p>
+<p align="center">
+  <img src="outputs/figures/confusion_matrix_random_forest.png" alt="Random Forest held-out confusion matrix with 6 false positives and 11 false negatives" width="68%">
+</p>
+
+Additional reports and figures are in [`outputs/reports/`](outputs/reports/)
+and [`outputs/figures/`](outputs/figures/). The updated
+[project report](RianRenju_ProjectReport.docx) contains the methodology,
+results, verification notes, and limitations.
+
+## 🚀 Quick start: notebook
+
+### 1. Obtain the dataset
+
+Download CIC-IDS2017 from the
+[official dataset page](https://www.unb.ca/cic/datasets/ids-2017.html). Place
+the selected CSV at:
+
+```text
+data/raw/Wednesday-workingHours.pcap_ISCX.csv
+```
+
+Alternatively, set `CIC_IDS2017_CSV` to the absolute path of a local CSV. Raw
+dataset files are not committed to Git.
+
+### 2. Create an environment and install notebook dependencies
+
+From the repository root in PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### 3. Launch Jupyter and run the notebook
+
+```powershell
+$env:CIC_IDS2017_CSV = (Resolve-Path ".\data\raw\Wednesday-workingHours.pcap_ISCX.csv").Path
+.\.venv\Scripts\python.exe -m jupyter lab
+```
+
+Open [`RianRenju_NetGuardML.ipynb`](RianRenju_NetGuardML.ipynb) and run its
+cells in order. If using the default path, the environment variable can be
+omitted. The notebook writes evaluation reports to `outputs/reports/`, figures
+to `outputs/figures/`, and the selected fitted pipeline to
+`artifacts/netguard_selected_pipeline.joblib`.
+
+> [!NOTE]
+> The recorded benchmark used a bounded sample, but running the notebook still
+> reads and scans the selected source CSV in chunks. Runtime depends on the
+> machine and dataset file.
+
+## 🌐 Run the local web interface
+
+The local UI requires the saved model artifact and evaluation report. Start the
+backend in **Terminal 1** from the repository root:
 
 ```powershell
 python -m venv backend\.venv
@@ -79,7 +211,7 @@ python -m venv backend\.venv
 .\backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload
 ```
 
-In Terminal 2, install and start the frontend:
+In **Terminal 2**, install and start the frontend:
 
 ```powershell
 Set-Location frontend
@@ -87,71 +219,102 @@ npm install
 npm run dev
 ```
 
-Open the Vite URL printed by the dev server (normally
-`http://localhost:5173`). The API defaults to `http://127.0.0.1:8000`.
-To check the frontend separately, run these commands from `frontend\`:
+Open the Vite URL shown in the terminal (normally
+`http://localhost:5173`). The API defaults to `http://127.0.0.1:8000`. To
+verify the frontend separately, run from `frontend\`:
 
 ```powershell
 npm run lint
 npm run build
 ```
 
-Set `VITE_API_BASE_URL` in `frontend/.env.local` to change the frontend API
-origin.
-The backend can override model/evaluation paths with
-`NETGUARD_MODEL_ARTIFACT` and `NETGUARD_EVALUATION_JSON`; configure permitted
-browser origins with `NETGUARD_CORS_ORIGINS`. API payloads and limits are
-documented in [API_CONTRACT.md](API_CONTRACT.md). These are local development
-commands, not deployment instructions.
+Optional local configuration:
 
-## Project files
+- `VITE_API_BASE_URL` in `frontend/.env.local` changes the API origin.
+- `NETGUARD_MODEL_ARTIFACT` changes the backend model path.
+- `NETGUARD_EVALUATION_JSON` changes the saved evaluation JSON path.
+- `NETGUARD_CORS_ORIGINS` configures permitted browser origins.
 
-- `PROJECT_SPEC.md` — scope, data source, candidate features, evaluation plan,
-  loading strategy, risks, and reproducibility.
-- `API_CONTRACT.md` — optional local frontend/backend API contract.
-- `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, model evaluation,
-  and reusable offline prediction workflow.
-- `frontend/` — optional React + TypeScript + Vite web UI; local build and lint
-  verified.
-- `backend/` — optional FastAPI integration for the saved model; local API
-  routes verified against the saved artifact.
-- `RianRenju_ProjectReport.docx` — project report scaffold.
-- `requirements.txt` — notebook dependencies, including joblib persistence.
-- `data/raw/` — location for manually obtained original dataset files.
-- `data/sample/` — unlabeled inference and labeled attack demonstration
-  samples derived from CIC-IDS2017; neither is independent validation.
-- `artifacts/` — selected fitted preprocessing-plus-model pipeline.
-- `outputs/figures/` — exploration and held-out evaluation figures.
-- `outputs/reports/` — actual metrics, classification reports, run metadata,
-  and per-record demonstration predictions.
+See [`API_CONTRACT.md`](API_CONTRACT.md) for routes, request/response details,
+limits, and errors. These are local development instructions, not deployment
+instructions.
 
-See [PROJECT_SPEC.md](PROJECT_SPEC.md) for scope, methodology, and limitations.
+## 📄 Use a CSV for offline inference
 
-## Dataset
+The notebook inference workflow can load the saved pipeline and classify a
+local CSV. Set `NETGUARD_PREDICTION_CSV` to the input path before running the
+inference section, or edit its configuration in the notebook. The web
+interface's Traffic Analysis page also accepts a CSV upload.
 
-Use the CIC-IDS2017 resource published by the Canadian Institute for
-Cybersecurity (UNB): <https://www.unb.ca/cic/datasets/ids-2017.html>.
-Place selected CSV files under `data/raw/`. The current recorded run streams
-`Wednesday-workingHours.pcap_ISCX.csv` in chunks and caps a seeded
-class-proportional sample at 50,000 rows; no remote download occurs. Raw CSVs
-are excluded from version control.
+The file must include all **78 trained feature columns**. A ground-truth label
+is not required; additional columns are reported and ignored. For example,
+[`data/sample/netguard_inference_demo.csv`](data/sample/netguard_inference_demo.csv)
+is an unlabeled 10-row inference demonstration. The labeled
+[`netguard_labeled_attack_demo.csv`](data/sample/netguard_labeled_attack_demo.csv)
+contains 35 genuine CIC-IDS2017 rows and retains the source `label` as an extra
+column; it is provided for demonstration only, not independent validation.
 
-## Reproducibility
+The notebook writes per-record results to
+`outputs/reports/netguard_predictions.csv`. Output labels are `BENIGN` and
+`POTENTIAL ATTACK`; where available, ATTACK probabilities are model estimates,
+not certainty. The API limits uploads to 50 MiB and 50,000 records, validates
+the feature schema, processes input in memory, and does not store uploads.
 
-The recorded run uses a fixed random seed for sampling/splitting and records the
-selected source subset, row counts, label mapping, feature list, split method,
-model parameters, and package versions in the evaluation report. The notebook
-uses estimator class weights rather than resampling and selects by ATTACK F1,
-then recall, then lower false-positive rate. Raw dataset files are local inputs
-and must not be committed.
+## 🗂️ Repository map
 
-## Out of scope
+| Path | Purpose |
+| --- | --- |
+| [`RianRenju_NetGuardML.ipynb`](RianRenju_NetGuardML.ipynb) | Exploration, preprocessing, training, evaluation, and offline inference |
+| [`RianRenju_ProjectReport.docx`](RianRenju_ProjectReport.docx) | Updated project report with actual benchmark results and limitations |
+| [`PROJECT_SPEC.md`](PROJECT_SPEC.md) | Project scope, data plan, methodology, and risks |
+| [`requirements.txt`](requirements.txt) | Notebook and model dependencies |
+| [`backend/`](backend/) | Local FastAPI model integration |
+| [`frontend/`](frontend/) | React + TypeScript + Vite web interface |
+| [`data/README.md`](data/README.md) | Dataset placement and sample provenance |
+| [`data/raw/`](data/raw/) | Locally obtained CIC-IDS2017 files; excluded from Git |
+| [`data/sample/`](data/sample/) | Unlabeled and labeled inference demonstrations |
+| [`artifacts/`](artifacts/) | Saved preprocessing-plus-model pipeline |
+| [`outputs/reports/`](outputs/reports/) | Metrics, classification reports, run metadata, prediction output |
+| [`outputs/figures/`](outputs/figures/) | Exploration and held-out evaluation plots |
+| [`docs/images/`](docs/images/) | Interface screenshots supplied with the project outputs document |
 
-Multiclass classification, live packet capture, traffic blocking, cloud
-deployment, analysis history, and paid APIs are not part of this prototype.
+## ⚠️ Limitations and responsible interpretation
 
-## Documentation references
+- The benchmark uses **one Wednesday CIC-IDS2017 file** and one bounded
+  sample; it does not measure performance across the other capture days or
+  unrelated networks.
+- A random row-level split may place related flows in train and test
+  partitions, which can overestimate generalization. A file-aware/day-aware
+  holdout has not been evaluated.
+- CIC-IDS2017 reflects traffic and attack methods from its capture period.
+  These results do not establish performance on modern live networks.
+- The classifier is binary and does not identify attack family, severity, or
+  intent. Predicted probabilities are not calibrated risk guarantees.
+- Destination port is retained as a feature and ranks highly in the recorded
+  feature-importance output. This may reflect dataset-specific structure and
+  merits further leakage/generalization analysis.
+- Precision-recall AUC and ROC AUC were not calculated for the recorded run.
+- NetGuard ML is for educational offline analysis, not production deployment,
+  packet capture, monitoring, alerting, or traffic blocking.
 
-- CIC-IDS2017 official dataset page: <https://www.unb.ca/cic/datasets/ids-2017.html>
-- pandas CSV I/O and chunking: <https://pandas.pydata.org/docs/user_guide/io.html#io-chunking>
-- scikit-learn classification metrics: <https://scikit-learn.org/stable/modules/model_evaluation.html>
+## 📘 Project report and credits
+
+Read or download the
+[updated NetGuard ML project report](RianRenju_ProjectReport.docx). Its
+benchmark results are also persisted in `outputs/reports/`; the report
+documents the run, reproducibility details, verification performed, and
+remaining limitations.
+
+**Author:** Rian Renju · [GitHub](https://github.com/Rianrx77/) ·
+[LinkedIn](https://www.linkedin.com/in/rian-renju)
+
+NetGuard ML is an educational cybersecurity project developed as part of the
+IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares. This
+describes project context and does not imply endorsement, certification, or
+official sponsorship of the application.
+
+## 🔗 References
+
+- [CIC-IDS2017 — Canadian Institute for Cybersecurity](https://www.unb.ca/cic/datasets/ids-2017.html)
+- [pandas CSV I/O and chunked reading](https://pandas.pydata.org/docs/user_guide/io.html#io-chunking)
+- [scikit-learn classification metrics](https://scikit-learn.org/stable/modules/model_evaluation.html)
