@@ -5,9 +5,11 @@ Last updated: 2026-10-23
 ## Purpose and scope
 
 Educational CIC-IDS2017 network-flow classifier for the IBM SkillsBuild Cyber
-Security Bootcamp 2026 (BharatCares). Binary target only: `BENIGN` = 0 and
-non-empty non-BENIGN labels = `ATTACK` = 1. Multiclass, live packet capture,
-dashboards, cloud deployment, and production claims are out of scope.
+Security Bootcamp 2026 (BharatCares). The core workflow is a notebook-based
+binary classifier: `BENIGN` = 0 and non-empty non-BENIGN labels = `ATTACK` = 1.
+An optional local web UI/API wraps the saved model for offline CSV inference.
+Multiclass classification, live packet capture/blocking, cloud deployment, and
+production claims remain out of scope.
 
 ## Current status
 
@@ -27,6 +29,38 @@ dashboards, cloud deployment, and production claims are out of scope.
 - **Working tree:** the root `.gitignore` remains a pre-staged addition and was
   not included in the Phase 4 commit. Raw CSVs are ignored by the tracked
   `data/raw/.gitignore`.
+- **Phase 5 scope approved:** React + TypeScript + Vite frontend with a minimal
+  FastAPI backend, documented API contract, no database/history, and no
+  real-time capture or mock analysis data. Upload limits are 50 MB and 50,000
+  records.
+- **Phase 5 verified locally:** backend dependencies installed in the isolated
+  `backend/.venv`; frontend dependencies installed with npm. `npm run build`
+  and `npm run lint` pass. Live API checks against the saved pipeline passed
+  for health, evaluation, feature-importance image, valid demo CSV validation
+  and inference (10 records), invalid schema/nonnumeric-value rejection
+  (`422`), and missing-model behavior (`503`). The demo predicted 10 BENIGN
+  records; this is a smoke test, not independent validation.
+- **Phase 5 browser checks:** all five views rendered and navigated; uploading
+  the demo CSV produced a 10-row prediction table. At a 375 CSS-pixel viewport,
+  page width matched scroll width (no horizontal overflow observed). The CSV
+  export generated the expected header and 10 data rows. The integrated browser
+  did not expose a native download event, so saved-file behavior itself was not
+  verified.
+- **Phase 5 test approach:** Starlette's `TestClient` could not import because
+  the isolated requirements do not include its optional `httpx2` dependency;
+  equivalent route checks ran against actual local Uvicorn servers using HTTP
+  requests. No test-only runtime dependency was added.
+- **Branding update:** frontend masthead uses the supplied Neural Shield SVG
+  from the project root. Typography is Plus Jakarta Sans for UI text and IBM
+  Plex Mono for monospace details, loaded from Google Fonts. Existing light
+  color palette remains unchanged. Frontend build/lint pass; browser confirms
+  the logo renders and the Plus Jakarta Sans family is available. IBM Plex Mono
+  is assigned to the shared monospace token used for record identifiers.
+- **About page credits:** a compact Project credits panel follows the existing
+  About & Methodology content. It identifies Rian Renju, links to the supplied
+  GitHub and LinkedIn profiles, and includes the provided bootcamp attribution.
+  No credentials or additional biography are displayed. README now includes
+  the same factual project context and author profile links.
 - **Submission readiness:** foundation, notebook workflow, and one model run
   exist, but the project is not final-submission-ready. The DOCX is still a
   Phase 1 scaffold; it does not contain the completed Phase 2/3 results.
@@ -40,6 +74,19 @@ dashboards, cloud deployment, and production claims are out of scope.
 - `RianRenju_ProjectReport.docx` — existing Phase 1 report scaffold; update is
   still required before final submission.
 - `requirements.txt` — Jupyter, pandas, NumPy, Matplotlib, scikit-learn, joblib.
+- `API_CONTRACT.md` — documented local FastAPI routes, payloads, upload limits,
+  and error responses.
+- `backend/app/main.py` — FastAPI health, saved-evaluation, feature-importance,
+  CSV validation, and fitted-model inference routes.
+- `backend/requirements.txt` — isolated FastAPI/Uvicorn and model inference
+  runtime dependencies. `backend/.gitignore` excludes its virtual environment.
+- `frontend/` — React + TypeScript + Vite source, API client/types, five
+  application views, responsive styling, `.env.example`, and npm lockfile;
+  build and lint verified. Masthead imports the root `netguard_ml_light.svg`;
+  fonts are linked from Google Fonts in `frontend/index.html`. The About view's
+  `Project credits` panel is implemented in `src/App.tsx` and styled in
+  `src/App.css`.
+- `data/README.md` — local dataset and demonstration-file placement guidance.
 - `data/raw/` — eight local CIC-IDS2017 CSVs; intentionally not committed.
   `data/raw/.gitignore` excludes `*.csv`.
 - `data/sample/netguard_inference_demo.csv` — 10 unlabeled demonstration
@@ -102,6 +149,25 @@ dashboards, cloud deployment, and production claims are out of scope.
    `BENIGN`/`POTENTIAL ATTACK`, and (when available) estimated ATTACK
    probability. Predictions are estimates, not verified labels. This processes
    offline records only; it does not capture packets or block traffic.
+9. Approved Phase 5 backend source loads the same fitted pipeline lazily and
+   reads the actual evaluation JSON and feature-importance PNG. `API_CONTRACT.md`
+   documents `/api/health`, `/api/model/evaluation`,
+   `/api/model/feature-importance`, `/api/validate`, and `/api/analyze`.
+   Uploads are limited to 50 MiB and 50,000 records; files are read in memory
+   and not persisted. Required columns are validated, and malformed CSVs,
+   header collisions, non-numeric numeric features, and infinities are
+   rejected. Additional columns are reported as ignored. There is no database
+   or history. Routes were exercised against the actual local Uvicorn service;
+   the saved model loaded and returned predictions. Missing-model behavior
+   returned `503`.
+10. The Phase 5 frontend source contains Overview, Traffic Analysis, Findings,
+    Model Evaluation, and About/Methodology views. It requests live health and
+    saved evaluation data and uses the API for file validation and actual
+    inference; prediction tables support search, pagination, CSV export, and a
+    minimum estimated-probability filter on Findings. Selecting a replacement
+    input clears prior session results. npm build/lint pass; browser navigation,
+    demo inference display, mobile-width layout, and generated CSV contents
+    were checked. Native browser download completion remains unverified.
 
 ## Models and measured results
 
@@ -182,6 +248,45 @@ Validation actually performed:
 - The notebook execution tool failed before running the cell because
   `agent-host-copilotcli:auto` was unavailable. Direct cell execution was used
   instead; it does not verify the notebook editor/kernel integration.
+- Before Phase 5, repository inspection found no frontend or backend. Vite
+  scaffolded a React + TypeScript project, then its app source was replaced
+  with the approved views and Arctic Intelligence styling. `data/README.md`
+  documents local dataset and sample placement.
+- Backend dependencies installed successfully in `backend/.venv`; core imports
+  succeeded with FastAPI 0.161.1, pandas 3.1.0, and scikit-learn 1.9.1.
+- Frontend `npm install`, `npm run build` (TypeScript + Vite), and
+  `npm run lint` completed successfully. Build emitted the production bundle;
+  lint returned no diagnostics.
+- After the branding update, `npm run build`, `npm run lint`, and
+  `git diff --check` passed. Browser rendering showed the imported SVG logo;
+  Plus Jakarta Sans was available in the page's font set. The separate IBM Plex
+  Mono face is configured but was not forced to render during this visual check.
+- For the About page credits update, `npm run build`, `npm run lint`, and
+  `git diff --check` passed. Browser checks at 1280px, 768px, and 390px showed
+  no document horizontal overflow; the credits panel used a horizontal
+  arrangement on desktop/tablet and a single-column arrangement on mobile.
+  Existing system overview, dataset, model/preprocessing, interpretation, and
+  limitations headings remained present. The two profile anchors displayed the
+  configured URLs, descriptive accessible labels, and `_blank` targets.
+  Keyboard Tab navigation reached the links with a visible focus outline.
+  External destination availability was not independently checked.
+- Live HTTP checks passed for API health/model availability, saved evaluation,
+  feature-importance PNG, validation of the 10-row demo CSV, and inference of
+  all 10 rows. The response contained 10 BENIGN predictions; these are example
+  demo predictions, not new evaluation results.
+- Live API validation returned `422` for missing required columns and for a
+  nonnumeric numeric feature. With a deliberately missing model artifact, the
+  health route reported model unavailable and validation returned `503`.
+- Browser check rendered all five views and exercised upload, validation,
+  inference, and result-table rendering. At a 375-pixel viewport the document
+  scroll width equaled its client width. Export generated a CSV blob with the
+  expected three-column header and 10 rows; the browser harness did not report
+  a native download event, so saved-file completion remains unverified.
+- A first API test attempt using `TestClient` could not start because Starlette
+  required optional `httpx2`; route checks were then completed against actual
+  Uvicorn servers, without adding a test-only runtime dependency.
+- Local Uvicorn and Vite servers were started for verification; no deployment
+  was performed.
 
 ## Incomplete work, risks, and next task
 
@@ -198,14 +303,29 @@ Validation actually performed:
   the Phase 4 cell in its native stateful workflow. The current demonstration
   predictions are not independent validation and must not be included as new
   model performance results.
+- Complete or formally accept the remaining browser-native CSV download check;
+  generated CSV blob contents were inspected but no native download event was
+  exposed by the integrated browser.
+- Reconcile stale statements in `PROJECT_SPEC.md` and update
+  `RianRenju_ProjectReport.docx` with the actual Phase 2/3 results, visuals,
+  methodology, and limitations.
+- Run the notebook top-to-bottom in a working notebook kernel to verify Phase 4
+  in its native stateful workflow; the existing direct cell check did not
+  verify notebook editor/kernel integration.
+- Remove or replace unused Vite starter assets and starter documentation after
+  checking they are not referenced. Select an appropriate project license
+  before adding a `LICENSE`; none has been chosen.
 - The root `.gitignore` is still staged as an addition outside the Phase 4
   commit; review it intentionally before any future commit. Do not accidentally
   stage raw CIC CSVs or virtual environments.
 - The Phase 4 workflow and demonstration files are committed and pushed. The
   project memory update is tracked separately from that workflow commit.
+- Phase 5 architecture and limits were approved on 2026-10-23. Local setup,
+  frontend build/lint, live API routes, model-unavailable behavior, and
+  responsive navigation have been verified. Changes remain uncommitted and
+  unpushed; do not include the pre-staged root `.gitignore` accidentally.
 
-**Next recommended task:** update the Word report from the already-generated
-evaluation files, clearly describing the Wednesday subset, random-split
-limitation, and Phase 4's illustrative offline prediction workflow. Completion
-means the DOCX contains the actual recorded metrics and appropriate limitations
-without presenting demonstration predictions as validation.
+**Next recommended task:** update the report DOCX with actual Phase 2/3 results
+and limitations, reconcile the remaining stale project-spec text, and run the
+notebook top-to-bottom in its native kernel. Keep demonstration predictions
+separate from model performance evidence.

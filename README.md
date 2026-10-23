@@ -38,12 +38,85 @@ values are estimates, not certainty.
 This is offline flow-record classification only. It does not capture packets,
 monitor live traffic, or block network connections.
 
+## Project credits
+
+NetGuard ML is an educational cybersecurity project developed as part of the
+IBM SkillsBuild Cyber Security Bootcamp 2026, conducted by BharatCares.
+
+**Author:** Rian Renju
+
+[GitHub](https://github.com/Rianrx77/) · [LinkedIn](https://www.linkedin.com/in/rian-renju)
+
+## Optional Phase 5 web interface
+
+The optional local web interface is a separate frontend and API; the notebook
+remains the training/evaluation workflow and the saved fitted pipeline remains
+the source of prediction behavior. The frontend builds and lints successfully,
+and the API has been exercised locally against the saved model. Browser checks
+covered all five views, upload validation, inference, and generated CSV export
+content. The 10-row demo upload produced 10 BENIGN predictions in that smoke
+test; these are demonstration outputs, not independent validation or
+model-performance results.
+
+The app has Overview, Traffic Analysis, Findings, Model Evaluation, and
+About/Methodology views. It displays the saved evaluation report and model
+availability when served by the API, and runs uploads through the existing
+fitted model. Uploads are limited to 50 MiB and 50,000 rows; CSVs are validated
+against the saved model schema, read in memory, and not stored. The service does
+not create an analysis history or perform live capture/blocking.
+The interface uses the supplied Neural Shield SVG, Plus Jakarta Sans for UI
+text, and IBM Plex Mono for monospace details; its existing light color palette
+is retained.
+
+### Run locally
+
+In Terminal 1, from the project root, create an isolated backend Python
+environment, install the model runtime and API dependencies, then start the API:
+
+```powershell
+python -m venv backend\.venv
+.\backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+.\backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload
+```
+
+In Terminal 2, install and start the frontend:
+
+```powershell
+Set-Location frontend
+npm install
+npm run dev
+```
+
+Open the Vite URL printed by the dev server (normally
+`http://localhost:5173`). The API defaults to `http://127.0.0.1:8000`.
+To check the frontend separately, run these commands from `frontend\`:
+
+```powershell
+npm run lint
+npm run build
+```
+
+Set `VITE_API_BASE_URL` in `frontend/.env.local` to change the frontend API
+origin.
+The backend can override model/evaluation paths with
+`NETGUARD_MODEL_ARTIFACT` and `NETGUARD_EVALUATION_JSON`; configure permitted
+browser origins with `NETGUARD_CORS_ORIGINS`. API payloads and limits are
+documented in [API_CONTRACT.md](API_CONTRACT.md). These are local development
+commands, not deployment instructions.
+
 ## Project files
 
 - `PROJECT_SPEC.md` — scope, data source, candidate features, evaluation plan,
   loading strategy, risks, and reproducibility.
+- `PROJECT_MEMORY.md` — implementation state, decisions, limitations, and
+  session handoff.
+- `API_CONTRACT.md` — optional local frontend/backend API contract.
 - `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, model evaluation,
   and reusable offline prediction workflow.
+- `frontend/` — optional React + TypeScript + Vite web UI; local build and lint
+  verified.
+- `backend/` — optional FastAPI integration for the saved model; local API
+  routes verified against the saved artifact.
 - `RianRenju_ProjectReport.docx` — project report scaffold.
 - `requirements.txt` — notebook dependencies, including joblib persistence.
 - `data/raw/` — location for manually obtained original dataset files.
@@ -76,8 +149,8 @@ and must not be committed.
 
 ## Out of scope
 
-Multiclass classification, live packet capture, dashboards, cloud deployment,
-and paid APIs are not part of this prototype.
+Multiclass classification, live packet capture, traffic blocking, cloud
+deployment, analysis history, and paid APIs are not part of this prototype.
 
 ## Documentation references
 
