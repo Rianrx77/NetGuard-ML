@@ -38,10 +38,11 @@ production claims remain out of scope.
   `origin/master`. Phase 4 workflow commit `e1c12af`, Phase 5 implementation
   commit `c3c52d5`, memory commit `40dad01`, and README clarification
   `fbd358e` are pushed.
-- **Current local worktree:** this follow-up commits the labeled sample and
-  supporting documentation, and moves this development memory under
-  `docs/internal/`. Regenerated notebook output, evaluation/report output
-  changes, and unused Vite starter assets are intentionally excluded.
+- **Current local worktree:** the labeled sample and its provenance
+  documentation were pushed in commit `aa9c21c`; the README refresh and six
+  screenshot assets were committed as `3937119`. The modified notebook, updated
+  project report and regenerated evaluation outputs, supplied output DOCX, and
+  unused Vite starter assets remain local and excluded from those commits.
   CIC-IDS2017 raw CSVs remain ignored by `data/raw/.gitignore`.
 - **Phase 5 scope approved:** React + TypeScript + Vite frontend with a minimal
   FastAPI backend, documented API contract, no database/history, and no
@@ -75,20 +76,28 @@ production claims remain out of scope.
   GitHub and LinkedIn profiles, and includes the provided bootcamp attribution.
   No credentials or additional biography are displayed. README now includes
   the same factual project context and author profile links.
-- **Submission readiness:** foundation, notebook workflow, and one model run
-  exist, but the project is not final-submission-ready. The DOCX is still a
-  Phase 1 scaffold; it does not contain the completed Phase 2/3 results.
+- **Project report:** `RianRenju_ProjectReport.docx` now contains the actual
+  Wednesday-subset methodology, model metrics, confusion counts, inference
+  checks, verification notes, limitations, and references. It notes the
+  incomplete native top-to-bottom notebook run and file-aware evaluation.
+- **Submission readiness:** the updated report and notebook/app deliverables
+  are present, but do not describe the project as fully validated or
+  production-ready. The native notebook workflow and independent
+  file/day-aware generalization remain unverified; `PROJECT_SPEC.md` still
+  needs reconciliation.
 
 ## Repository map
 
 - `PROJECT_SPEC.md` — project specification and intended evaluation methodology.
 - `docs/internal/PROJECT_MEMORY.md` — development state, decisions, validation,
   limitations, and session handoff; kept outside the top-level project files.
-- `README.md` — overview and summary of the completed Wednesday-subset run.
+- `README.md` — detailed project guide with setup commands, benchmark results,
+  scope/limitations, updated report link, and screenshots from the supplied
+  outputs document.
 - `RianRenju_NetGuardML.ipynb` — configurable exploration, preprocessing,
   model training, evaluation, charting, and persistence workflow.
-- `RianRenju_ProjectReport.docx` — existing Phase 1 report scaffold; update is
-  still required before final submission.
+- `RianRenju_ProjectReport.docx` — updated project report with actual benchmark
+  methodology/results, inference and UI checks, limitations, and references.
 - `requirements.txt` — Jupyter, pandas, NumPy, Matplotlib, scikit-learn, joblib.
 - `API_CONTRACT.md` — documented local FastAPI routes, payloads, upload limits,
   and error responses.
@@ -103,6 +112,8 @@ production claims remain out of scope.
   `Project credits` panel is implemented in `src/App.tsx` and styled in
   `src/App.css`.
 - `data/README.md` — local dataset and demonstration-file placement guidance.
+- `docs/images/` — six UI screenshots extracted from the supplied
+  `NetGuard ML outputs.docx` and referenced from the README.
 - `data/raw/` — eight local CIC-IDS2017 CSVs; intentionally not committed.
   `data/raw/.gitignore` excludes `*.csv`.
 - `data/sample/netguard_inference_demo.csv` — 10 unlabeled demonstration
@@ -288,6 +299,13 @@ Validation actually performed:
   predictions); this is a compatibility smoke check only and is not an
   evaluation result. No source CSV or raw data was added to version control by
   this workflow.
+- The README results were checked against `outputs/reports/evaluation_results.json`
+  and the updated DOCX report. The six interface images used in the README
+  were extracted from the supplied outputs DOCX and placed under `docs/images/`.
+  The 52 local Markdown/image references resolve, and the scoped whitespace
+  check passed. A repository-wide whitespace check also reported a pre-existing
+  extra blank line at EOF in `outputs/reports/classification_reports.txt`;
+  that generated report was not changed for the README update.
 - Before Phase 5, repository inspection found no frontend or backend. Vite
   scaffolded a React + TypeScript project, then its app source was replaced
   with the approved views and Arctic Intelligence styling. `data/README.md`
@@ -330,8 +348,6 @@ Validation actually performed:
 
 ## Incomplete work, risks, and next task
 
-- Update `RianRenju_ProjectReport.docx` with real run methodology, metrics,
-  visuals, limitations, and conclusions.
 - Reconcile stale statements in `PROJECT_SPEC.md` (for example, its opening
   says the document is foundation-only, some dataset claims remain unverified,
   and the planned structure does not list all generated deliverables).
@@ -346,18 +362,9 @@ Validation actually performed:
 - Complete or formally accept the remaining browser-native CSV download check;
   generated CSV blob contents were inspected but no native download event was
   exposed by the integrated browser.
-- Reconcile stale statements in `PROJECT_SPEC.md` and update
-  `RianRenju_ProjectReport.docx` with the actual Phase 2/3 results, visuals,
-  methodology, and limitations.
-- Run the notebook top-to-bottom in a working notebook kernel to verify Phase 4
-  in its native stateful workflow; the existing direct cell check did not
-  verify notebook editor/kernel integration.
 - Remove or replace unused Vite starter assets and starter documentation after
   checking they are not referenced. Select an appropriate project license
   before adding a `LICENSE`; none has been chosen.
-- The root `.gitignore` is still staged as an addition outside the Phase 4
-  commit; review it intentionally before any future commit. Do not accidentally
-  stage raw CIC CSVs or virtual environments.
 - The Phase 4 workflow and demonstration files are committed and pushed. The
   project memory update is tracked separately from that workflow commit.
 - Phase 5 architecture and limits were approved on 2026-10-23. Local setup,
@@ -370,8 +377,14 @@ Validation actually performed:
   and relocates this development memory to `docs/internal/PROJECT_MEMORY.md`.
   The generated notebook/report outputs and unused starter assets remain
   intentionally excluded from the commit.
+- The README now includes reproducible notebook and local UI setup commands,
+  benchmark metrics consistent with `outputs/reports/evaluation_results.json`
+  and the updated project report, scope/limitations, links to the report, and
+  screenshots copied from the separately supplied `NetGuard ML outputs.docx`
+  into `docs/images/`. The DOCX files themselves were not modified in this
+  README task. Its local references were checked; commit `3937119` is ready to
+  push with this memory update.
 
-**Next recommended task:** update the report DOCX with actual Phase 2/3 results
-and limitations, reconcile the remaining stale project-spec text, and run the
-notebook top-to-bottom in its native kernel. Keep demonstration predictions
-separate from model performance evidence.
+**Next recommended task:** reconcile the remaining stale project-spec text and
+run the notebook top-to-bottom in its native kernel. Keep demonstration
+predictions separate from model performance evidence.
