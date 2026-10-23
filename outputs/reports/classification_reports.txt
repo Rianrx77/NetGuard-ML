@@ -1,0 +1,19 @@
+Classification report — Logistic Regression
+              precision    recall  f1-score   support
+
+      BENIGN     0.9901    0.9747    0.9823      6352
+      ATTACK     0.9570    0.9830    0.9698      3648
+
+    accuracy                         0.9777     10000
+   macro avg     0.9736    0.9788    0.9761     10000
+weighted avg     0.9780    0.9777    0.9778     10000
+
+Classification report — Random Forest
+              precision    recall  f1-score   support
+
+      BENIGN     0.9983    0.9991    0.9987      6352
+      ATTACK     0.9984    0.9970    0.9977      3648
+
+    accuracy                         0.9983     10000
+   macro avg     0.9983    0.9980    0.9982     10000
+weighted avg     0.9983    0.9983    0.9983     10000

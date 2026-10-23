@@ -124,8 +124,10 @@ Record the chosen model, parameters, dataset subset, sample method, split
 strategy, test results, and limitations in `outputs/reports/`. Save the
 preprocessing-plus-classifier pipeline with joblib in `artifacts/`.
 
-No metric values or model comparisons are recorded until the notebook
-successfully completes with the selected local source data.
+The completed Wednesday-subset run and actual metrics are recorded in
+`outputs/reports/`; the reported results apply only to that sampled subset and
+random row-level split. They do not establish performance on modern live
+networks.
 
 ## Limitations
 

@@ -10,12 +10,17 @@ The goal is to classify labeled CIC-IDS2017 flow records as:
 
 ## Implementation status
 
-The notebook contains Phase 2 data exploration/preprocessing and Phase 3 binary
-model training/evaluation workflows for Logistic Regression and Random Forest.
-Eight CIC-IDS2017 CSV files are present under `data/raw/`. The notebook is
-configured to use `Wednesday-workingHours.pcap_ISCX.csv` as its explicit subset.
-The notebook cells have not yet completed execution, so no actual model scores,
-fitted model artifact, or evaluation figures are claimed.
+The notebook's Phase 2/3 workflow has completed a run on
+`Wednesday-workingHours.pcap_ISCX.csv` (692,703 source rows; 50,000-row
+bounded sample; stratified 80/20 row-level split). On the 10,000-row held-out
+test set, Logistic Regression achieved 0.9777 accuracy, 0.9698 ATTACK F1, and
+0.02535 false-positive rate. Random Forest achieved 0.9983 accuracy, 0.9977
+ATTACK F1, and 0.000945 false-positive rate, and was selected by the documented
+criteria. It produced 6 false positives and 11 false negatives. See
+`outputs/reports/` for the actual metrics, classification reports, dataset/split
+metadata, and `outputs/figures/` for saved plots. This is a benchmark result,
+not evidence of production performance or generalization to modern live traffic;
+related flows may cross the random split.
 
 ## Project files
 
@@ -23,12 +28,12 @@ fitted model artifact, or evaluation figures are claimed.
   loading strategy, risks, and reproducibility.
 - `RianRenju_NetGuardML.ipynb` — exploration, preprocessing, and model evaluation
   workflow.
-- `RianRenju_ProjectReport.docx` — Phase 1 report scaffold.
+- `RianRenju_ProjectReport.docx` — project report scaffold.
 - `requirements.txt` — notebook dependencies, including joblib persistence.
 - `data/raw/` — location for manually obtained original dataset files.
 - `data/sample/` — location for explicitly sampled/derived data, not committed
   raw data.
-- `artifacts/` — selected fitted pipeline, written only after a successful run.
+- `artifacts/` — selected fitted preprocessing-plus-model pipeline.
 - `outputs/figures/` — exploration and held-out evaluation figures.
 - `outputs/reports/` — actual metrics, classification reports, and run metadata.
 
@@ -45,12 +50,12 @@ workflow.
 
 ## Reproducibility
 
-Use a documented Python environment, a fixed random seed for sampling/splitting,
-and record the selected source subset, row counts, label mapping, feature list,
-split method, model parameters, and package versions in the generated evaluation
-report. The notebook uses estimator class weights rather than resampling and
-selects by attack F1, then recall, then lower false-positive rate. Never commit
-secrets or large raw dataset files.
+The recorded run uses a fixed random seed for sampling/splitting and records the
+selected source subset, row counts, label mapping, feature list, split method,
+model parameters, and package versions in the evaluation report. The notebook
+uses estimator class weights rather than resampling and selects by ATTACK F1,
+then recall, then lower false-positive rate. Raw dataset files are local inputs
+and must not be committed.
 
 ## Out of scope
 
